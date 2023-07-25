@@ -9,8 +9,11 @@ output.yaml: schemas/deploymentconfig.json
 schemas/deploymentconfig.json: schemas/openshift.json
 	bash extract-dc-schema.sh < $< > $@ || { rm -f $@; exit 1; }
 
-schemas/openshift.json:
+schemas/openshift.json: schemas
 	curl -sSf -o $@ -H "Authorization: Bearer $(TOKEN)" $(SERVER)/openapi/v2
+
+schemas:
+	mkdir schemas
 
 clean:
 	rm -f output.yaml schemas/deploymentconfig.json
