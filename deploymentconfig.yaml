@@ -1,0 +1,48 @@
+apiVersion: apps.openshift.io/v1
+kind: DeploymentConfig
+metadata:
+  name: portal
+spec:
+  replicas: 1
+  strategy:
+    type: Rolling
+    rollingParams:
+      intervalSeconds: 1
+      maxSurge: 1
+      maxUnavailable: 0
+      timeoutSeconds: 180
+  template:
+    spec:
+      volumes:
+      - name: environments
+        configMap:
+          name: portal
+      containers:
+        - name: portal
+          image: portal
+          ports:
+            - containerPort: 8080
+          volumeMounts:
+          - name: environments
+            mountPath: /var/www/html/environments-ui
+          readinessProbe:
+            failureThreshold: 3
+            tcpSocket:
+              port: 8080
+            timeoutSeconds: 5
+            periodSeconds: 60
+            initialDelaySeconds: 5
+          livenessProbe:
+            failureThreshold: 3
+            tcpSocket:
+              port: 8080
+            timeoutSeconds: 1
+            periodSeconds: 10
+            initialDelaySeconds: 5
+          startupProbe:
+            failureThreshold: 30
+            tcpSocket:
+              port: 8080
+            timeoutSeconds: 2
+            periodSeconds: 10
+            initialDelaySeconds: 5
