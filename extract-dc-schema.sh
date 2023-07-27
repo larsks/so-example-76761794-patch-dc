@@ -4,7 +4,6 @@ jq '
 	fromstream(
 		{
 			"swagger": .swagger,
-			"info": .info,
 			"definitions": [
 			.definitions|to_entries[]|select(
 				(.key|startswith("com.github.openshift.api.apps.v1.Deployment")) or
